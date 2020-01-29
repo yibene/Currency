@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Currency</string>
+    <string name="base_currency">Base Currency</string>
+    <string name="last_update_time">currencylayer data time: %s</string>
+</resources>

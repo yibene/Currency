@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="cash.practice.currency.FlagsContainerKt"/>
+        <variable
+            name="viewModel"
+            type="cash.practice.currency.viewmodel.MainViewModel" />
+        <variable
+            name="item"
+            type="cash.practice.currency.model.Rate" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/flag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{FlagsContainerKt.flagsTable.get(item.currency)}"
+            android:textSize="28sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="🥇"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:text="@{item.currency}"
+            android:textColor="@android:color/black"
+            android:textSize="26sp"
+            android:fontFamily="sans-serif-light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="BAM" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/convert_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_purple"
+            android:textSize="32sp"
+            android:gravity="center"
+            android:fontFamily="sans-serif-condensed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/currency_name"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:baseRate="@{viewModel.selectedBaseCurrency.rate}"
+            app:itemRate="@{item.rate}"
+            app:currentValue="@{viewModel.currentBaseValue}"
+            tools:text="8.7654321"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/currency_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="@{item.currencyName}"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/convert_rate"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Bosnia-Herzegovina Convertible Mark" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
