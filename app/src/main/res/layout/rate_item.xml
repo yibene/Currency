@@ -60,7 +60,7 @@
             app:layout_constraintVertical_chainStyle="packed"
             app:baseRate="@{viewModel.selectedBaseCurrency.rate}"
             app:itemRate="@{item.rate}"
-            app:currentValue="@{viewModel.currentBaseValue}"
+            app:baseValue="@{viewModel.baseValue}"
             tools:text="8.7654321"/>
 
         <androidx.appcompat.widget.AppCompatTextView

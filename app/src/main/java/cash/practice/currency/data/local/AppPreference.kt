@@ -8,6 +8,7 @@ class AppPreference(private val sharedPreferences: SharedPreferences) {
         const val PREFERENCES = "ApplicationPreference"
         private const val CURRENCY_CACHE_TIME = "appSettings_currencyCacheTime"
         private const val LAST_UPDATE_TIME = "appSettings_lastUpdateTime"
+        private const val PINNED_CURRENCY = "appSettings_pinnedCurrency"
     }
 
     var currencyCacheTime: Long
@@ -23,6 +24,14 @@ class AppPreference(private val sharedPreferences: SharedPreferences) {
         set(value) {
             val editor = sharedPreferences.edit()
             editor.putLong(LAST_UPDATE_TIME, value)
+            editor.apply()
+        }
+
+    var pinnedCurrency: String
+        get() = sharedPreferences.getString(PINNED_CURRENCY, "") ?: ""
+        set(value) {
+            val editor = sharedPreferences.edit()
+            editor.putString(PINNED_CURRENCY, value)
             editor.apply()
         }
 }

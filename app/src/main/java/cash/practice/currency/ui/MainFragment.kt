@@ -48,34 +48,11 @@ class MainFragment : Fragment(), KodeinAware {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.lifecycleOwner = viewLifecycleOwner
+        binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        base_value_input?.addTextChangedListener(
-            beforeTextChanged = { _, _, _, _ -> },
-            afterTextChanged = { editable ->
-                if (editable?.isEmpty() == true) {
-                    viewModel.currentBaseValue.set(0.0)
-                } else {
-                    viewModel.currentBaseValue.set(base_value_input?.text.toString().toDouble())
-                }
-            },
-            onTextChanged = { _, _, _, _ -> }
-        )
-        base_value_input?.setOnKeyListener { _, keyCode, keyEvent ->
-            if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                base_value_input?.clearFocus()
-                return@setOnKeyListener true
-            }
-            return@setOnKeyListener false
-        }
-        currency_list?.adapter = ConvertRateAdapter().apply {
-            setItemClickListener(object: ConvertRateAdapter.ItemClickListener {
-                override fun onItemClick(view: View, position: Int) {
-                    viewModel.selectBaseCurrency(viewModel.currencyListCache.get()?.get(position))
-                }
-            })
-        }
+        currency_list?.adapter = viewModel.getAdapter()
+
         val layoutManager = LinearLayoutManager(context)
         currency_list?.layoutManager = layoutManager
         currency_list?.itemAnimator = DefaultItemAnimator()
@@ -87,7 +64,7 @@ class MainFragment : Fragment(), KodeinAware {
         viewModel.getCurrencyList(getString(R.string.currency_access_key)).observe(this, Observer { result ->
             when (result.status) {
                 Status.SUCCESS -> {
-                    viewModel.currencyListCache.set(result.data)
+                    viewModel.setCurrencyListCache(result.data)
                     getRates()
                 }
                 Status.LOADING -> {
@@ -106,8 +83,7 @@ class MainFragment : Fragment(), KodeinAware {
             when (result.status) {
                 Status.SUCCESS -> {
                     Log.w(TAG, "load rate list success! length = ${result.data?.size}")
-                    viewModel.currencyListCache.set(result.data)
-                    (currency_list?.adapter as ConvertRateAdapter).setViewModel(viewModel)
+                    viewModel.setCurrencyListCache(result.data)
                     viewModel.isLoading.set(false)
                     viewModel.lastUpdateTime.set(SimpleDateFormat("MM/dd/yy HH:mm:ss", Locale.getDefault()).format(Date(preference.lastUpdateTime*1000)))
                 }

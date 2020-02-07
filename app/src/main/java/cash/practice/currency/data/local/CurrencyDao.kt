@@ -6,7 +6,7 @@ import cash.practice.currency.model.Rate
 @Dao
 interface CurrencyDao {
 
-    @Query("SELECT * FROM RateTable ORDER BY currency ASC")
+    @Query("SELECT * FROM RateTable ORDER BY favorite DESC, currency ASC")
     suspend fun getAll(): List<Rate>
 
     @Query("UPDATE RateTable SET rate = :rate WHERE currency = :currency")

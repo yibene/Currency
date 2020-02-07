@@ -11,10 +11,10 @@ import cash.practice.currency.R
 import cash.practice.currency.model.Rate
 import cash.practice.currency.viewmodel.MainViewModel
 
-class ConvertRateAdapter : RecyclerView.Adapter<ConvertRateAdapter.ConvertRateHolder>() {
+class ConvertRateAdapter(private val viewModel: MainViewModel) : RecyclerView.Adapter<ConvertRateAdapter.ConvertRateHolder>() {
 
-    private var viewModel: MainViewModel? = null
     private var clickListener: ItemClickListener? = null
+    private var dataList: List<Rate>? = null
 
     companion object {
         private const val TAG = "ConvertRateAdapter"
@@ -22,6 +22,7 @@ class ConvertRateAdapter : RecyclerView.Adapter<ConvertRateAdapter.ConvertRateHo
 
     interface ItemClickListener {
         fun onItemClick(view: View, position: Int)
+        fun onItemLongClick(view: View, position: Int)
     }
 
     inner class ConvertRateHolder(val binding: RateItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -33,6 +34,10 @@ class ConvertRateAdapter : RecyclerView.Adapter<ConvertRateAdapter.ConvertRateHo
             itemView.setOnClickListener { v ->
                 clickListener?.onItemClick(v, adapterPosition)
             }
+            itemView.setOnLongClickListener { v ->
+                clickListener?.onItemLongClick(v, adapterPosition)
+                true
+            }
         }
 
         fun getCurrentPosition() = currentPosition
@@ -43,28 +48,19 @@ class ConvertRateAdapter : RecyclerView.Adapter<ConvertRateAdapter.ConvertRateHo
         return ConvertRateHolder(DataBindingUtil.inflate(inflater, R.layout.rate_item, parent, false))
     }
 
-    private fun getDataList(): List<Rate>? {
-        return viewModel?.currencyListCache?.get()
+    fun setDataList(list: List<Rate>?) {
+        dataList = list
     }
 
     override fun onBindViewHolder(holder: ConvertRateHolder, position: Int) {
         holder.onBind(position)
         if (holder.getCurrentPosition() == position) {
-            val item = getDataList()?.get(position)
-            holder.binding.item = item
+            holder.binding.item = viewModel._currencyListCache.get()?.get(position)
         }
     }
 
     override fun getItemCount(): Int {
-        return getDataList()?.size ?: 0
-    }
-
-    fun setViewModel(viewModel: MainViewModel?) {
-        if (this.viewModel != null) {
-            Log.e(TAG, "set view model twice!")
-        }
-        this.viewModel = viewModel
-        notifyDataSetChanged()
+        return viewModel._currencyListCache.get()?.size ?: 0
     }
 
     fun setItemClickListener(clickListener: ItemClickListener) {

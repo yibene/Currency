@@ -44,9 +44,13 @@ data class Rate(
     val currencyName: String?,
 
     @ColumnInfo(name = "rate")
-    val rate: Double? = 0.0
+    val rate: Double? = 0.0,
+
+    @ColumnInfo(name = "favorite")
+    var isFavorite: Boolean = false
 ) {
     override fun toString(): String {
-        return "$currency - $currencyName - $rate"
+        if (isFavorite) return "* $currency - $currencyName - $rate"
+        return "  $currency - $currencyName - $rate"
     }
 }
