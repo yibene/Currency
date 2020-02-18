@@ -1,14 +1,19 @@
 package cash.practice.currency.data.local
 
 import android.content.SharedPreferences
+import cash.practice.currency.model.Rate
+import com.google.gson.Gson
 
-class AppPreference(private val sharedPreferences: SharedPreferences) {
+class AppPreference(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
+) {
     companion object {
         private const val TAG = "AppPreference"
         const val PREFERENCES = "ApplicationPreference"
         private const val CURRENCY_CACHE_TIME = "appSettings_currencyCacheTime"
         private const val LAST_UPDATE_TIME = "appSettings_lastUpdateTime"
-        private const val PINNED_CURRENCY = "appSettings_pinnedCurrency"
+        private const val FAVORITE_CURRENCY = "appSettings_favoriteCurrency"
     }
 
     var currencyCacheTime: Long
@@ -27,11 +32,15 @@ class AppPreference(private val sharedPreferences: SharedPreferences) {
             editor.apply()
         }
 
-    var pinnedCurrency: String
-        get() = sharedPreferences.getString(PINNED_CURRENCY, "") ?: ""
-        set(value) {
+    var favoriteCurrency: List<Rate>
+        get() {
+            val listString = sharedPreferences.getString(FAVORITE_CURRENCY, null)
+            return listString?.let { gson.fromJson(it, Array<Rate>::class.java).toList() } ?: listOf()
+        }
+        set(list) {
+            val listString = gson.toJson(list)
             val editor = sharedPreferences.edit()
-            editor.putString(PINNED_CURRENCY, value)
+            editor.putString(FAVORITE_CURRENCY, listString)
             editor.apply()
         }
 }

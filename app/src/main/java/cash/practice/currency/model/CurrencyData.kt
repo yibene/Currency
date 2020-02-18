@@ -44,13 +44,25 @@ data class Rate(
     val currencyName: String?,
 
     @ColumnInfo(name = "rate")
-    val rate: Double? = 0.0,
+    var rate: Double? = 0.0,
 
     @ColumnInfo(name = "favorite")
-    var isFavorite: Boolean = false
+    var isFavorite: Int = 0
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        return other is Rate && other.currency == currency && other.currencyName == currencyName
+    }
     override fun toString(): String {
-        if (isFavorite) return "* $currency - $currencyName - $rate"
-        return "  $currency - $currencyName - $rate"
+        val string = if (isFavorite > 0) "* " else ""
+        return "$string$currency - $currencyName - $rate"
+    }
+
+    override fun hashCode(): Int {
+        var result = currency.hashCode()
+        result = 31 * result + (currencyName?.hashCode() ?: 0)
+        result = 31 * result + (rate?.hashCode() ?: 0)
+        result = 31 * result + isFavorite
+        return result
     }
 }

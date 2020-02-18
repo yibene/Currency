@@ -8,7 +8,7 @@ import cash.practice.currency.model.Rate
     entities = [
         Rate::class
     ],
-    version = 2
+    version = 1
 )
 
 abstract class AppDatabase : RoomDatabase() {

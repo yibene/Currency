@@ -27,17 +27,17 @@ const val CURRENCY_URL = "http://api.currencylayer.com/"
 
 val appModule = Kodein.Module(TAG) {
 
-    bind<AppPreference>() with singleton {
-        AppPreference(instance<Context>().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE))
-    }
-
     bind<Gson>() with singleton {
         val builder = GsonBuilder()
         builder.create()
     }
 
+    bind<AppPreference>() with singleton {
+        AppPreference(instance<Context>().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE), instance())
+    }
+
     bind<MainViewModel>() with eagerSingleton {
-        MainViewModel(instance())
+        MainViewModel(instance(), instance())
     }
 
     bind<Converter.Factory>() with provider {

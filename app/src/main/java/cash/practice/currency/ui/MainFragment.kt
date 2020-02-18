@@ -2,12 +2,10 @@ package cash.practice.currency.ui
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -51,6 +49,7 @@ class MainFragment : Fragment(), KodeinAware {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
+        viewModel.getItemTouchHelper().attachToRecyclerView(currency_list)
         currency_list?.adapter = viewModel.getAdapter()
 
         val layoutManager = LinearLayoutManager(context)
@@ -83,6 +82,7 @@ class MainFragment : Fragment(), KodeinAware {
             when (result.status) {
                 Status.SUCCESS -> {
                     Log.w(TAG, "load rate list success! length = ${result.data?.size}")
+                    loadFavorite()
                     viewModel.setCurrencyListCache(result.data)
                     viewModel.isLoading.set(false)
                     viewModel.lastUpdateTime.set(SimpleDateFormat("MM/dd/yy HH:mm:ss", Locale.getDefault()).format(Date(preference.lastUpdateTime*1000)))
@@ -95,6 +95,15 @@ class MainFragment : Fragment(), KodeinAware {
                 }
             }
         })
+    }
+
+    private fun loadFavorite() {
+        viewModel.loadFavoriteList()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.saveFavoriteList()
     }
 
 }

@@ -2,4 +2,6 @@
     <string name="app_name">Currency</string>
     <string name="base_currency">Base Currency</string>
     <string name="last_update_time">currencylayer data time: %s</string>
+    <string name="favorite_header">Favorite (swipe to remove)</string>
+    <string name="currency_header">All Currency (long click to add to favorite)</string>
 </resources>
