@@ -54,7 +54,7 @@ class ConvertRateAdapter(private val viewModel: MainViewModel) : RecyclerView.Ad
                 clickListener?.onCurrencyClick(v, adapterPosition)
             }
             itemView.setOnLongClickListener { v ->
-                clickListener?.onCurrencyLongClick(v, adapterPosition) ?: false
+                clickListener?.onCurrencyLongClick(v, adapterPosition) == true
             }
         }
 

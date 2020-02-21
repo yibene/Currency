@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="48dp"
-            android:text="@{item.currency}"
+            android:text="@{item.isFavorite() == 1 ? item.currency + `*` : item.currency}"
             android:textColor="@android:color/black"
             android:textSize="26sp"
             android:fontFamily="sans-serif-light"

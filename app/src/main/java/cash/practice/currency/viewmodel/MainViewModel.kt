@@ -18,7 +18,6 @@ import cash.practice.currency.data.remote.Resource
 import cash.practice.currency.repository.CurrencyRepository
 import cash.practice.currency.repository.DataRepository
 import cash.practice.currency.ui.ConvertRateAdapter
-import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
@@ -105,15 +104,20 @@ class MainViewModel(
                     val position = viewHolder.adapterPosition - 1
                     val list = favoriteList.get()?.toMutableList()
                     val item = list?.get(position)
-                    item?.let {
-                        it.isFavorite = 0
+                    item?.let { favorite ->
+                        favorite.isFavorite = 0
                         GlobalScope.launch {
-                            (currencyRepository as CurrencyRepository).setFavoriteRate(it)
+                            (currencyRepository as CurrencyRepository).setFavoriteRate(favorite)
                         }
+                        val currencyPosition = currencyList.get()?.indexOf(favorite)
+                        currencyPosition?.let {
+                            val favoriteCount = list.size
+                            adapter?.notifyItemChanged(it + favoriteCount + 2)
+                        }
+                        list.removeAt(position)
+                        favoriteList.set(list)
+                        adapter?.notifyItemRemoved(viewHolder.adapterPosition)
                     }
-                    list?.removeAt(position)
-                    favoriteList.set(list)
-                    adapter?.notifyItemRemoved(viewHolder.adapterPosition)
                 }
             }
         )
@@ -160,24 +164,32 @@ class MainViewModel(
         override fun onCurrencyLongClick(view: View, adapterPosition: Int): Boolean {
             val favoriteCount = favoriteList.get()?.size ?: 0
             val item = currencyList.get()?.get(adapterPosition - favoriteCount - 2)
-            val favList = favoriteList.get()?.toMutableList()
+            val list = favoriteList.get()?.toMutableList()
+            var favoritePosition: Int = -1
             item?.let { rate ->
-                favList?.let {
-                    if (!it.contains(rate)) {
+                list?.let {
+                    if (it.contains(rate)) {
+                        favoritePosition = it.indexOf(rate)
+                        rate.isFavorite = 0
+                        it.remove(rate)
+                    } else {
                         rate.isFavorite = 1
                         it.add(rate)
-                        favoriteList.set(it)
-                        GlobalScope.launch {
-                            (currencyRepository as CurrencyRepository).setFavoriteRate(rate)
-                        }
+                    }
+                    favoriteList.set(it)
+                    GlobalScope.launch {
+                        (currencyRepository as CurrencyRepository).setFavoriteRate(rate)
                     }
                 }
             }
             val newCount = favoriteList.get()?.size ?: 0
-            return if (newCount > favoriteCount) {
+            adapter?.notifyItemChanged(adapterPosition)
+            if (newCount > favoriteCount) {
                 adapter?.notifyItemInserted(favoriteList.get()?.size ?: 0)
-                true
-            } else false
+            } else {
+                if (favoritePosition >= 0) adapter?.notifyItemRemoved(favoritePosition + 1)
+            }
+            return true
         }
     }
 
